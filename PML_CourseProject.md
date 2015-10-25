@@ -80,35 +80,29 @@ Starting with Random Forest model, to see if it would have acceptable performanc
 fitControl <- trainControl(method="cv", number=3, verboseIter=F)
 
 # fit model on pmlTrain1
-fit <- train(classe ~ ., data=pmlTrain1, method="rpart", trControl=fitControl)
+fit <- train(classe ~ ., data=pmlTrain1, method="rf", trControl=fitControl)
 
 # print final model to see tuning parameters it chose
 fit$finalModel
 ```
 
 ```
-## n= 15699 
 ## 
-## node), split, n, loss, yval, (yprob)
-##       * denotes terminal node
+## Call:
+##  randomForest(x = x, y = y, mtry = param$mtry) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 27
 ## 
-##  1) root 15699 11235 A (0.28 0.19 0.17 0.16 0.18)  
-##    2) roll_belt< 129.5 14308  9895 A (0.31 0.21 0.19 0.18 0.11)  
-##      4) pitch_forearm< -33.95 1245     8 A (0.99 0.0064 0 0 0) *
-##      5) pitch_forearm>=-33.95 13063  9887 A (0.24 0.23 0.21 0.2 0.12)  
-##       10) magnet_dumbbell_y< 437.5 11038  7933 A (0.28 0.18 0.24 0.19 0.11)  
-##         20) roll_forearm< 123.5 6886  4110 A (0.4 0.19 0.19 0.17 0.056) *
-##         21) roll_forearm>=123.5 4152  2784 C (0.079 0.17 0.33 0.23 0.19) *
-##       11) magnet_dumbbell_y>=437.5 2025   989 B (0.035 0.51 0.044 0.22 0.18) *
-##    3) roll_belt>=129.5 1391    51 E (0.037 0 0 0 0.96) *
+##         OOB estimate of  error rate: 0.19%
+## Confusion matrix:
+##      A    B    C    D    E  class.error
+## A 4462    1    0    0    1 0.0004480287
+## B    6 3030    2    0    0 0.0026333114
+## C    0    5 2733    0    0 0.0018261505
+## D    0    0    9 2563    1 0.0038865138
+## E    0    1    0    4 2881 0.0017325017
 ```
-
-```r
-# Plotting our classification tree
-fancyRpartPlot(fit$finalModel)
-```
-
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
 
 The Random Forest model decided to use 500 trees and try 27 variables at each split.
 
@@ -132,33 +126,33 @@ confusionMatrix(pmlTrain2$classe, preds)
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
-##          A 1001   19   73    0   23
-##          B  291  260  208    0    0
-##          C  306   19  359    0    0
-##          D  271  124  248    0    0
-##          E  105   98  159    0  359
+##          A 1116    0    0    0    0
+##          B    2  755    2    0    0
+##          C    0    1  680    3    0
+##          D    0    0    0  643    0
+##          E    0    0    0    0  721
 ## 
 ## Overall Statistics
-##                                           
-##                Accuracy : 0.5045          
-##                  95% CI : (0.4887, 0.5202)
-##     No Information Rate : 0.5032          
-##     P-Value [Acc > NIR] : 0.4429          
-##                                           
-##                   Kappa : 0.3537          
-##  Mcnemar's Test P-Value : NA              
+##                                          
+##                Accuracy : 0.998          
+##                  95% CI : (0.996, 0.9991)
+##     No Information Rate : 0.285          
+##     P-Value [Acc > NIR] : < 2.2e-16      
+##                                          
+##                   Kappa : 0.9974         
+##  Mcnemar's Test P-Value : NA             
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity            0.5071  0.50000  0.34288       NA  0.93979
-## Specificity            0.9410  0.85336  0.88700   0.8361  0.89777
-## Pos Pred Value         0.8970  0.34256  0.52485       NA  0.49792
-## Neg Pred Value         0.6534  0.91783  0.78759       NA  0.99282
-## Prevalence             0.5032  0.13255  0.26689   0.0000  0.09737
-## Detection Rate         0.2552  0.06628  0.09151   0.0000  0.09151
-## Detection Prevalence   0.2845  0.19347  0.17436   0.1639  0.18379
-## Balanced Accuracy      0.7240  0.67668  0.61494       NA  0.91878
+## Sensitivity            0.9982   0.9987   0.9971   0.9954   1.0000
+## Specificity            1.0000   0.9987   0.9988   1.0000   1.0000
+## Pos Pred Value         1.0000   0.9947   0.9942   1.0000   1.0000
+## Neg Pred Value         0.9993   0.9997   0.9994   0.9991   1.0000
+## Prevalence             0.2850   0.1927   0.1738   0.1647   0.1838
+## Detection Rate         0.2845   0.1925   0.1733   0.1639   0.1838
+## Detection Prevalence   0.2845   0.1935   0.1744   0.1639   0.1838
+## Balanced Accuracy      0.9991   0.9987   0.9979   0.9977   1.0000
 ```
 
 The accuracy is 99.8%, an the accuracy for the out-of-sample error is 0.2%.
@@ -188,13 +182,8 @@ pmlTest <- pmlTest[, -(1:5)]
 
 # re-fit model using full training set (pmlTrain)
 fitControl <- trainControl(method="cv", number=3, verboseIter=F)
-fit <- train(classe ~ ., data=pmlTrain, method="rpart", trControl=fitControl)
-
-# Plotting our classification tree
-fancyRpartPlot(fit$finalModel)
+fit <- train(classe ~ ., data=pmlTrain, method="rf", trControl=fitControl)
 ```
-
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
 ## Making Test Set Predictions
 

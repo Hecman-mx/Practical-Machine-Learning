@@ -76,13 +76,10 @@ Starting with Random Forest model, to see if it would have acceptable performanc
 fitControl <- trainControl(method="cv", number=3, verboseIter=F)
 
 # fit model on pmlTrain1
-fit <- train(classe ~ ., data=pmlTrain1, method="rpart", trControl=fitControl)
+fit <- train(classe ~ ., data=pmlTrain1, method="rf", trControl=fitControl)
 
 # print final model to see tuning parameters it chose
 fit$finalModel
-
-# Plotting our classification tree
-fancyRpartPlot(fit$finalModel)
 ```
 
 The Random Forest model decided to use 500 trees and try 27 variables at each split.
@@ -127,10 +124,7 @@ pmlTest <- pmlTest[, -(1:5)]
 
 # re-fit model using full training set (pmlTrain)
 fitControl <- trainControl(method="cv", number=3, verboseIter=F)
-fit <- train(classe ~ ., data=pmlTrain, method="rpart", trControl=fitControl)
-
-# Plotting our classification tree
-fancyRpartPlot(fit$finalModel)
+fit <- train(classe ~ ., data=pmlTrain, method="rf", trControl=fitControl)
 ```
 
 ## Making Test Set Predictions
